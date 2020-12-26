@@ -20,3 +20,19 @@ func searchRecursive(node *Node, key int64) *Node {
 
 	return searchRecursive(node.Left, key)
 }
+
+func searchIterative(node *Node, key int64) *Node {
+	if node == nil || node.Key == key {
+		return node
+	}
+
+	for node != nil && node.Key != key {
+		if key > node.Key {
+			node = node.Right
+		} else {
+			node = node.Left
+		}
+	}
+
+	return node
+}
