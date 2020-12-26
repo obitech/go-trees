@@ -7,12 +7,25 @@ func (t *Tree) Search(key int64) *Node {
 		return nil
 	}
 
-	return searchRecursive(t.Root, key)
+	return searchIterative(t.Root, key)
 }
 
 // Min returns the Node with the lowest key, or nil.
 func (t *Tree) Min() *Node {
 	return min(t.Root)
+}
+
+// Max returns the Node with the highest key, or nil.
+func (t *Tree) Max() *Node {
+	return max(t.Root)
+}
+
+func max(node *Node) *Node {
+	for node != nil && node.Right != nil {
+		node = node.Right
+	}
+
+	return node
 }
 
 func min(node *Node) *Node {
@@ -21,18 +34,6 @@ func min(node *Node) *Node {
 	}
 
 	return node
-}
-
-func searchRecursive(node *Node, key int64) *Node {
-	if node == nil || node.Key == key {
-		return node
-	}
-
-	if key > node.Key {
-		return searchRecursive(node.Right, key)
-	}
-
-	return searchRecursive(node.Left, key)
 }
 
 func searchIterative(node *Node, key int64) *Node {

@@ -148,141 +148,6 @@ func TestTree_Search(t *testing.T) {
 	}
 }
 
-func TestTree_recursiveAndIterativeSearch(t *testing.T) {
-	tt := []struct {
-		name string
-		node *Node
-		key  int64
-		want *Node
-	}{
-		{
-			name: "nil node returns nil",
-		},
-		{
-			name: "root hit returns value",
-			node: &Node{
-				Key: 5,
-			},
-			key:  5,
-			want: &Node{Key: 5},
-		},
-		{
-			name: "root miss returns nil",
-			node: &Node{
-				Key: 6,
-			},
-			key: 5,
-		},
-		{
-			name: "h=1 left tree hit returns value",
-			node: &Node{
-				Key: 10,
-				Left: &Node{
-					Key: 5,
-				},
-				Right: &Node{
-					Key: 15,
-				},
-			},
-			key:  5,
-			want: &Node{Key: 5},
-		},
-		{
-			name: "h=1 right tree hit returns value",
-			node: &Node{
-				Key: 10,
-				Left: &Node{
-					Key: 5,
-				},
-				Right: &Node{
-					Key: 15,
-				},
-			},
-			key:  15,
-			want: &Node{Key: 15},
-		},
-		{
-			name: "h=1 miss returns nil",
-			node: &Node{
-				Key: 10,
-				Left: &Node{
-					Key: 5,
-				},
-				Right: &Node{
-					Key: 15,
-				},
-			},
-			key: 99,
-		},
-		{
-			name: "h=2 right tree hit returns value",
-			node: &Node{
-				Key: 10,
-				Left: &Node{
-					Key: 5,
-					Left: &Node{
-						Key: 3,
-					},
-					Right: &Node{
-						Key: 7,
-					},
-				},
-				Right: &Node{
-					Key: 15,
-					Left: &Node{
-						Key: 12,
-					},
-					Right: &Node{
-						Key: 19,
-					},
-				},
-			},
-			key:  19,
-			want: &Node{Key: 19},
-		},
-		{
-			name: "h=2 left tree hit returns value",
-			node: &Node{
-				Key: 10,
-				Left: &Node{
-					Key: 5,
-					Left: &Node{
-						Key: 3,
-					},
-					Right: &Node{
-						Key: 7,
-					},
-				},
-				Right: &Node{
-					Key: 15,
-					Left: &Node{
-						Key: 12,
-					},
-					Right: &Node{
-						Key: 19,
-					},
-				},
-			},
-			key:  3,
-			want: &Node{Key: 3},
-		},
-	}
-
-	for _, tc := range tt {
-		t.Run("searchRecursive", func(t *testing.T) {
-			t.Run(tc.name, func(t *testing.T) {
-				assert.Equal(t, tc.want, searchRecursive(tc.node, tc.key))
-			})
-		})
-
-		t.Run("searchIterative", func(t *testing.T) {
-			t.Run(tc.name, func(t *testing.T) {
-				assert.Equal(t, tc.want, searchIterative(tc.node, tc.key))
-			})
-		})
-	}
-}
-
 func TestTree_Min(t *testing.T) {
 	tt := []struct {
 		name string
@@ -292,15 +157,6 @@ func TestTree_Min(t *testing.T) {
 		{
 			name: "Nil node returns nil",
 			tree: &Tree{},
-		},
-		{
-			name: "root returns root value",
-			tree: &Tree{
-				Root: &Node{
-					Key: 5,
-				},
-			},
-			want: &Node{Key: 5},
 		},
 		{
 			name: "root returns root value",
@@ -358,6 +214,76 @@ func TestTree_Min(t *testing.T) {
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
 			assert.Equal(t, tc.want, tc.tree.Min())
+		})
+	}
+}
+
+func TestTree_Max(t *testing.T) {
+	tt := []struct {
+		name string
+		tree *Tree
+		want *Node
+	}{
+		{
+			name: "Nil node returns nil",
+			tree: &Tree{},
+		},
+		{
+			name: "root returns root value",
+			tree: &Tree{
+				Root: &Node{
+					Key: 5,
+				},
+			},
+			want: &Node{Key: 5},
+		},
+		{
+			name: "h=1 returns correct value",
+			tree: &Tree{
+				Root: &Node{
+					Key: 10,
+					Left: &Node{
+						Key: 5,
+					},
+					Right: &Node{
+						Key: 15,
+					},
+				},
+			},
+			want: &Node{Key: 15},
+		},
+		{
+			name: "h=2 returns correct value",
+			tree: &Tree{
+				Root: &Node{
+					Key: 10,
+					Left: &Node{
+						Key: 5,
+						Left: &Node{
+							Key: 3,
+						},
+						Right: &Node{
+							Key: 7,
+						},
+					},
+					Right: &Node{
+						Key: 15,
+						Left: &Node{
+							Key: 12,
+						},
+						Right: &Node{
+							Key: 19,
+						},
+					},
+				},
+			},
+			want: &Node{Key: 19},
+		},
+	}
+
+	for _, tc := range tt {
+		t.Run(tc.name, func(t *testing.T) {
+			assert.Equal(t, tc.want, tc.tree.Max())
 		})
 	}
 }
