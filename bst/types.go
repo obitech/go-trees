@@ -1,18 +1,25 @@
 package bst
 
-// Indexer needs to be implemented by types that are part of the payload of
-// the tree. The Index function returns the index, or key, of the node.
-type Indexer interface {
-	Index() int64
-}
+import (
+	"sync"
+)
 
+// Tree represents a binary search tree with a root not and Mutex to protect
+// concurrent access.
 type Tree struct {
-	Root *Node
+	sync.RWMutex
+	root *node
 }
 
-type Node struct {
+type Item struct {
 	Key     int64
-	Left    *Node
-	Right   *Node
-	Payload Indexer
+	Payload interface{}
+}
+
+type node struct {
+	key     int64
+	left    *node
+	right   *node
+	parent  *node
+	payload interface{}
 }

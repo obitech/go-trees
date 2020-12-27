@@ -6,12 +6,17 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestTree_Search(t *testing.T) {
+type item struct {
+	key     int64
+	payload string
+}
+
+func TestTree_search(t *testing.T) {
 	tt := []struct {
 		name string
 		tree *Tree
 		key  int64
-		want *Node
+		want *node
 	}{
 		{
 			name: "nil tree returns nil",
@@ -20,18 +25,18 @@ func TestTree_Search(t *testing.T) {
 		{
 			name: "root hit returns value",
 			tree: &Tree{
-				Root: &Node{
-					Key: 5,
+				root: &node{
+					key: 5,
 				},
 			},
 			key:  5,
-			want: &Node{Key: 5},
+			want: &node{key: 5},
 		},
 		{
 			name: "root miss returns nil",
 			tree: &Tree{
-				Root: &Node{
-					Key: 6,
+				root: &node{
+					key: 6,
 				},
 			},
 			key: 5,
@@ -39,45 +44,45 @@ func TestTree_Search(t *testing.T) {
 		{
 			name: "h=1 left tree hit returns value",
 			tree: &Tree{
-				Root: &Node{
-					Key: 10,
-					Left: &Node{
-						Key: 5,
+				root: &node{
+					key: 10,
+					left: &node{
+						key: 5,
 					},
-					Right: &Node{
-						Key: 15,
+					right: &node{
+						key: 15,
 					},
 				},
 			},
 			key:  5,
-			want: &Node{Key: 5},
+			want: &node{key: 5},
 		},
 		{
 			name: "h=2 right tree hit returns value",
 			tree: &Tree{
-				Root: &Node{
-					Key: 10,
-					Left: &Node{
-						Key: 5,
+				root: &node{
+					key: 10,
+					left: &node{
+						key: 5,
 					},
-					Right: &Node{
-						Key: 15,
+					right: &node{
+						key: 15,
 					},
 				},
 			},
 			key:  15,
-			want: &Node{Key: 15},
+			want: &node{key: 15},
 		},
 		{
 			name: "h=2 miss returns nil",
 			tree: &Tree{
-				Root: &Node{
-					Key: 10,
-					Left: &Node{
-						Key: 5,
+				root: &node{
+					key: 10,
+					left: &node{
+						key: 5,
 					},
-					Right: &Node{
-						Key: 15,
+					right: &node{
+						key: 15,
 					},
 				},
 			},
@@ -86,73 +91,73 @@ func TestTree_Search(t *testing.T) {
 		{
 			name: "h=3 right tree hit returns value",
 			tree: &Tree{
-				Root: &Node{
-					Key: 10,
-					Left: &Node{
-						Key: 5,
-						Left: &Node{
-							Key: 3,
+				root: &node{
+					key: 10,
+					left: &node{
+						key: 5,
+						left: &node{
+							key: 3,
 						},
-						Right: &Node{
-							Key: 7,
+						right: &node{
+							key: 7,
 						},
 					},
-					Right: &Node{
-						Key: 15,
-						Left: &Node{
-							Key: 12,
+					right: &node{
+						key: 15,
+						left: &node{
+							key: 12,
 						},
-						Right: &Node{
-							Key: 19,
+						right: &node{
+							key: 19,
 						},
 					},
 				},
 			},
 			key:  19,
-			want: &Node{Key: 19},
+			want: &node{key: 19},
 		},
 		{
 			name: "h=3 left tree hit returns value",
 			tree: &Tree{
-				Root: &Node{
-					Key: 10,
-					Left: &Node{
-						Key: 5,
-						Left: &Node{
-							Key: 3,
+				root: &node{
+					key: 10,
+					left: &node{
+						key: 5,
+						left: &node{
+							key: 3,
 						},
-						Right: &Node{
-							Key: 7,
+						right: &node{
+							key: 7,
 						},
 					},
-					Right: &Node{
-						Key: 15,
-						Left: &Node{
-							Key: 12,
+					right: &node{
+						key: 15,
+						left: &node{
+							key: 12,
 						},
-						Right: &Node{
-							Key: 19,
+						right: &node{
+							key: 19,
 						},
 					},
 				},
 			},
 			key:  3,
-			want: &Node{Key: 3},
+			want: &node{key: 3},
 		},
 	}
 
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
-			assert.Equal(t, tc.want, tc.tree.Search(tc.key))
+			assert.Equal(t, tc.want, search(tc.tree.root, tc.key))
 		})
 	}
 }
 
-func TestTree_Min(t *testing.T) {
+func TestTree_min(t *testing.T) {
 	tt := []struct {
 		name string
 		tree *Tree
-		want *Node
+		want *node
 	}{
 		{
 			name: "Nil node returns nil",
@@ -161,68 +166,68 @@ func TestTree_Min(t *testing.T) {
 		{
 			name: "root returns root value",
 			tree: &Tree{
-				Root: &Node{
-					Key: 5,
+				root: &node{
+					key: 5,
 				},
 			},
-			want: &Node{Key: 5},
+			want: &node{key: 5},
 		},
 		{
 			name: "h=1 returns correct value",
 			tree: &Tree{
-				Root: &Node{
-					Key: 10,
-					Left: &Node{
-						Key: 5,
+				root: &node{
+					key: 10,
+					left: &node{
+						key: 5,
 					},
-					Right: &Node{
-						Key: 15,
+					right: &node{
+						key: 15,
 					},
 				},
 			},
-			want: &Node{Key: 5},
+			want: &node{key: 5},
 		},
 		{
 			name: "h=2 returns correct value",
 			tree: &Tree{
-				Root: &Node{
-					Key: 10,
-					Left: &Node{
-						Key: 5,
-						Left: &Node{
-							Key: 3,
+				root: &node{
+					key: 10,
+					left: &node{
+						key: 5,
+						left: &node{
+							key: 3,
 						},
-						Right: &Node{
-							Key: 7,
+						right: &node{
+							key: 7,
 						},
 					},
-					Right: &Node{
-						Key: 15,
-						Left: &Node{
-							Key: 12,
+					right: &node{
+						key: 15,
+						left: &node{
+							key: 12,
 						},
-						Right: &Node{
-							Key: 19,
+						right: &node{
+							key: 19,
 						},
 					},
 				},
 			},
-			want: &Node{Key: 3},
+			want: &node{key: 3},
 		},
 	}
 
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
-			assert.Equal(t, tc.want, tc.tree.Min())
+			assert.Equal(t, tc.want, min(tc.tree.root))
 		})
 	}
 }
 
-func TestTree_Max(t *testing.T) {
+func TestTree_max(t *testing.T) {
 	tt := []struct {
 		name string
 		tree *Tree
-		want *Node
+		want *node
 	}{
 		{
 			name: "Nil node returns nil",
@@ -231,59 +236,191 @@ func TestTree_Max(t *testing.T) {
 		{
 			name: "root returns root value",
 			tree: &Tree{
-				Root: &Node{
-					Key: 5,
+				root: &node{
+					key: 5,
 				},
 			},
-			want: &Node{Key: 5},
+			want: &node{key: 5},
 		},
 		{
 			name: "h=1 returns correct value",
 			tree: &Tree{
-				Root: &Node{
-					Key: 10,
-					Left: &Node{
-						Key: 5,
+				root: &node{
+					key: 10,
+					left: &node{
+						key: 5,
 					},
-					Right: &Node{
-						Key: 15,
+					right: &node{
+						key: 15,
 					},
 				},
 			},
-			want: &Node{Key: 15},
+			want: &node{key: 15},
 		},
 		{
 			name: "h=2 returns correct value",
 			tree: &Tree{
-				Root: &Node{
-					Key: 10,
-					Left: &Node{
-						Key: 5,
-						Left: &Node{
-							Key: 3,
+				root: &node{
+					key: 10,
+					left: &node{
+						key: 5,
+						left: &node{
+							key: 3,
 						},
-						Right: &Node{
-							Key: 7,
+						right: &node{
+							key: 7,
 						},
 					},
-					Right: &Node{
-						Key: 15,
-						Left: &Node{
-							Key: 12,
+					right: &node{
+						key: 15,
+						left: &node{
+							key: 12,
 						},
-						Right: &Node{
-							Key: 19,
+						right: &node{
+							key: 19,
 						},
 					},
 				},
 			},
-			want: &Node{Key: 19},
+			want: &node{key: 19},
 		},
 	}
 
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
-			assert.Equal(t, tc.want, tc.tree.Max())
+			assert.Equal(t, tc.want, max(tc.tree.root))
+		})
+	}
+}
+
+func TestTree_Upsert(t *testing.T) {
+	t.Run("insert", func(t *testing.T) {
+		tt := []struct {
+			name  string
+			items []item
+		}{
+			{
+				name: "insert one",
+				items: []item{
+					{
+						key:     5,
+						payload: "test",
+					},
+				},
+			},
+			{
+				name: "insert two",
+				items: []item{
+					{
+						key:     5,
+						payload: "test",
+					},
+					{
+						key:     10,
+						payload: "test2",
+					},
+				},
+			},
+			{
+				name: "insert four",
+				items: []item{
+					{
+						key:     5,
+						payload: "test",
+					},
+					{
+						key:     10,
+						payload: "test2",
+					},
+					{
+						key:     15,
+						payload: "test3",
+					},
+					{
+						key:     3,
+						payload: "test4",
+					},
+				},
+			},
+		}
+
+		for _, tc := range tt {
+			t.Run(tc.name, func(t *testing.T) {
+				tree := New()
+
+				for _, i := range tc.items {
+					tree.Upsert(i.key, i.payload)
+				}
+
+				for i, v := range tc.items {
+					assert.Equal(t, tc.items[i].payload, tree.Search(v.key))
+				}
+			})
+		}
+	})
+
+	t.Run("update", func(t *testing.T) {
+		tree := New()
+
+		tree.Upsert(1, "test")
+		tree.Upsert(2, "test2")
+
+		assert.Equal(t, "test", tree.Search(1))
+		assert.Equal(t, "test2", tree.Search(2))
+
+		tree.Upsert(1, "test3")
+
+		assert.Equal(t, "test3", tree.Search(1))
+		assert.Equal(t, "test2", tree.Search(2))
+	})
+}
+
+func TestTree_Height(t *testing.T) {
+	tt := []struct {
+		name  string
+		items []int64
+		want  int
+	}{
+		{
+			name: "empty tree returns -1",
+			want: -1,
+		},
+		{
+			name:  "rooted tree returns 0",
+			items: []int64{15},
+			want:  0,
+		},
+		{
+			name:  "root with two children returns 1",
+			items: []int64{15, 10, 20},
+			want:  1,
+		},
+		{
+			name:  "left-sided tree returns 2",
+			items: []int64{15, 10, 5},
+			want:  2,
+		},
+		{
+			name:  "right-sided tree returns 2",
+			items: []int64{15, 20, 25},
+			want:  2,
+		},
+		{
+			name:  "custom tree returns 4",
+			items: []int64{15, 6, 18, 3, 7, 17, 20, 2, 4, 13, 19, 9},
+			want:  4,
+		},
+	}
+
+	for _, tc := range tt {
+		t.Run(tc.name, func(t *testing.T) {
+			tree := New()
+
+			for _, v := range tc.items {
+				tree.Upsert(v, nil)
+			}
+
+			assert.Equal(t, tc.want, tree.Height())
 		})
 	}
 }
