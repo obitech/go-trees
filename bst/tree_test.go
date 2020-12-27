@@ -346,7 +346,7 @@ func TestTree_Upsert(t *testing.T) {
 
 		for _, tc := range tt {
 			t.Run(tc.name, func(t *testing.T) {
-				tree := New()
+				tree := NewBST()
 
 				for _, i := range tc.items {
 					tree.Upsert(i.key, i.payload)
@@ -360,7 +360,7 @@ func TestTree_Upsert(t *testing.T) {
 	})
 
 	t.Run("update", func(t *testing.T) {
-		tree := New()
+		tree := NewBST()
 
 		tree.Upsert(1, "test")
 		tree.Upsert(2, "test2")
@@ -414,13 +414,181 @@ func TestTree_Height(t *testing.T) {
 
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
-			tree := New()
+			tree := NewBST()
 
 			for _, v := range tc.items {
 				tree.Upsert(v, nil)
 			}
 
 			assert.Equal(t, tc.want, tree.Height())
+		})
+	}
+}
+
+func TestTree_Successor(t *testing.T) {
+	tt := []struct {
+		name    string
+		items   []item
+		toCheck int64
+		want    string
+	}{
+		{
+			name: "empty tree yields nil",
+		},
+		{
+			name: "h=0 tree yields nil",
+			items: []item{
+				{
+					key:     15,
+					payload: "test",
+				},
+			},
+			toCheck: 15,
+		},
+		{
+			name: "h=1 tree yields result",
+			items: []item{
+				{
+					key:     15,
+					payload: "test",
+				},
+				{
+					key:     20,
+					payload: "test2",
+				},
+				{
+					key:     5,
+					payload: "test3",
+				},
+			},
+			toCheck: 5,
+			want:    "test",
+		},
+		{
+			name:    "multi-level tree yields result",
+			toCheck: 4,
+			want:    "6",
+			items: []item{
+				{
+					key:     15,
+					payload: "15",
+				},
+				{
+					key:     6,
+					payload: "6",
+				},
+				{
+					key:     18,
+					payload: "18",
+				},
+				{
+					key:     3,
+					payload: "3",
+				},
+				{
+					key:     7,
+					payload: "7",
+				},
+				{
+					key:     17,
+					payload: "17",
+				},
+				{
+					key:     20,
+					payload: "20",
+				},
+				{
+					key:     2,
+					payload: "2",
+				},
+				{
+					key:     4,
+					payload: "4",
+				},
+				{
+					key:     13,
+					payload: "13",
+				},
+				{
+					key:     19,
+					payload: "19",
+				},
+				{
+					key:     9,
+					payload: "9",
+				},
+			},
+		},
+		{
+			name:    "multi-level tree yields result",
+			toCheck: 13,
+			want:    "15",
+			items: []item{
+				{
+					key:     15,
+					payload: "15",
+				},
+				{
+					key:     6,
+					payload: "6",
+				},
+				{
+					key:     18,
+					payload: "18",
+				},
+				{
+					key:     3,
+					payload: "3",
+				},
+				{
+					key:     7,
+					payload: "7",
+				},
+				{
+					key:     17,
+					payload: "17",
+				},
+				{
+					key:     20,
+					payload: "20",
+				},
+				{
+					key:     2,
+					payload: "2",
+				},
+				{
+					key:     4,
+					payload: "4",
+				},
+				{
+					key:     13,
+					payload: "13",
+				},
+				{
+					key:     19,
+					payload: "19",
+				},
+				{
+					key:     9,
+					payload: "9",
+				},
+			},
+		},
+	}
+
+	for _, tc := range tt {
+		t.Run(tc.name, func(t *testing.T) {
+			tree := NewBST()
+
+			for _, i := range tc.items {
+				tree.Upsert(i.key, i.payload)
+			}
+
+			if tc.want != "" {
+				assert.Equal(t, tc.want, tree.Successor(tc.toCheck))
+			} else {
+				assert.Nil(t, tree.Successor(tc.toCheck))
+			}
 		})
 	}
 }

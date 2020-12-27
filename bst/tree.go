@@ -6,8 +6,8 @@ import (
 	"sync"
 )
 
-// New returns an empty binary search tree.
-func New() *Tree {
+// NewBST returns an empty binary search tree.
+func NewBST() *Tree {
 	return &Tree{
 		RWMutex: sync.RWMutex{},
 		root:    nil,
@@ -145,6 +145,10 @@ func height(node *node) float64 {
 }
 
 func successor(node *node) *node {
+	if node == nil {
+		return nil
+	}
+
 	if node.right != nil {
 		return min(node.right)
 	}

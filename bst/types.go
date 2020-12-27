@@ -11,11 +11,6 @@ type Tree struct {
 	root *node
 }
 
-type Item struct {
-	Key     int64
-	Payload interface{}
-}
-
 type node struct {
 	key     int64
 	left    *node
