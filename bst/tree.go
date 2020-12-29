@@ -30,10 +30,13 @@ func (t *Tree) Root() interface{} {
 // has no nodes. A (rooted) tree with only a node (the root) has a height of
 // zero.
 func (t *Tree) Height() int {
+	t.RLock()
+	defer t.RUnlock()
+
 	return int(height(t.root))
 }
 
-// Upsert inserts or updates an item.
+// Upsert inserts or updates an item. Runs in O(lg n) time on average.
 func (t *Tree) Upsert(key int64, payload interface{}) {
 	t.Lock()
 	defer t.Unlock()
@@ -136,6 +139,52 @@ func (t *Tree) Successor(key int64) interface{} {
 	return n.payload
 }
 
+// Delete deletes a node with a given key. This runs in O(h) time with h being
+// the height of the tree.
+func (t *Tree) Delete(key int64) {
+	t.Lock()
+	defer t.Unlock()
+
+	if n := search(t.root, key); n != nil {
+		t.delete(n)
+	}
+}
+
+func (t *Tree) delete(node *node) {
+	switch {
+	// If the node has no left subtree, replace it with its right subtree.
+	case node.left == nil:
+		t.transplant(node, node.right)
+
+	// If the node has a left subtree but not a right one, replace it with
+	// 	its right subtree.
+	case node.right == nil:
+		t.transplant(node, node.left)
+
+	// Node has two children.
+	default:
+		// The node's successor must be the smallest key in the right subtree,
+		// which has no left child.
+		succ := min(node.right)
+
+		// If the successor is the node's right child, the successor doesn't
+		// have a left subtree. We replace the node with its right child (the
+		// successor) and leave the latter's right subtree in tact.
+		if succ.parent != node {
+			t.transplant(succ, succ.right)
+
+			succ.right = node.right
+			succ.right.parent = succ
+		}
+
+		// If the successor is the node's right child, replace the parent of
+		// the node by its successor, attaching node's left child.
+		t.transplant(node, succ)
+		succ.left = node.left
+		succ.left.parent = node
+	}
+}
+
 func height(node *node) float64 {
 	if node == nil {
 		return -1
@@ -193,4 +242,31 @@ func search(node *node, key int64) *node {
 	}
 
 	return node
+}
+
+// transplant replaces one subtree of a node as a child of its parent, with
+// another subtree.
+func (t *Tree) transplant(nodeA, nodeB *node) {
+	if nodeA == nil {
+		return
+	}
+
+	switch {
+	// If nodeA is the root, nodeB will be root now.
+	case nodeA.parent == nil:
+		t.root = nodeB
+
+	// If nodeA is a left-child, replace with nodeB.
+	case nodeA == nodeA.parent.left:
+		nodeA.parent.left = nodeB
+
+	// If nodeA is a right-child, replace with nodeB.
+	default:
+		nodeA.parent.right = nodeB
+	}
+
+	// Update parent relationship.
+	if nodeB != nil {
+		nodeB.parent = nodeA.parent
+	}
 }

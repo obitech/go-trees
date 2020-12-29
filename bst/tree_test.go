@@ -592,3 +592,150 @@ func TestTree_Successor(t *testing.T) {
 		})
 	}
 }
+
+func TestTree_Delete(t *testing.T) {
+	t.Run("delete on empty tree is noop", func(t *testing.T) {
+		tree := NewBST()
+
+		assert.Equal(t, -1, tree.Height())
+
+		tree.Delete(0)
+
+		assert.Equal(t, -1, tree.Height())
+	})
+
+	t.Run("delete on rooted tree on non-existing key is noop", func(t *testing.T) {
+		tree := NewBST()
+
+		tree.Upsert(15, "test")
+		tree.Delete(0)
+
+		assert.Equal(t, 0, tree.Height())
+		assert.Equal(t, "test", tree.Search(15))
+	})
+
+	t.Run("deleting root node leaves empty tree", func(t *testing.T) {
+		tree := NewBST()
+
+		tree.Upsert(15, "test")
+		assert.Equal(t, 0, tree.Height())
+
+		tree.Delete(15)
+
+		assert.Equal(t, -1, tree.Height())
+		assert.Nil(t, tree.root)
+	})
+
+	t.Run("deleted node gets replace by right child", func(t *testing.T) {
+		tree := NewBST()
+
+		z := &node{key: 15}
+		r := &node{key: 20}
+		r1 := &node{key: 25}
+		r2 := &node{key: 23}
+
+		tree.root = z
+		z.right = r
+
+		r.parent = z
+		r.right = r1
+		r.left = r2
+
+		assert.Equal(t, 2, tree.Height())
+
+		tree.Delete(15)
+
+		// r is now root
+		assert.Nil(t, r.parent)
+		assert.Equal(t, 1, tree.Height())
+		assert.Equal(t, r1, r.right)
+		assert.Equal(t, r2, r.left)
+	})
+
+	t.Run("deleted node gets replace by left child", func(t *testing.T) {
+		tree := NewBST()
+
+		z := &node{key: 15}
+		r := &node{key: 5}
+		r1 := &node{key: 10}
+		r2 := &node{key: 3}
+
+		tree.root = z
+		z.left = r
+
+		r.parent = z
+		r.right = r1
+		r.left = r2
+
+		assert.Equal(t, 2, tree.Height())
+
+		tree.Delete(15)
+
+		// r is now root
+		assert.Nil(t, r.parent)
+		assert.Equal(t, 1, tree.Height())
+		assert.Equal(t, r1, r.right)
+		assert.Equal(t, r2, r.left)
+	})
+
+	t.Run("deleted nodes has two children, successor is right child", func(t *testing.T) {
+		tree := NewBST()
+
+		z := &node{key: 15}
+		y := &node{key: 20}
+		l := &node{key: 5}
+		x := &node{key: 25}
+
+		tree.root = z
+		z.left = l
+		z.right = y
+
+		l.parent = z
+
+		y.parent = z
+		y.right = x
+
+		assert.Equal(t, 2, tree.Height())
+
+		tree.Delete(15)
+
+		// y is now parent with l as its left subtree
+		assert.Nil(t, y.parent)
+		assert.Equal(t, 1, tree.Height())
+		assert.Equal(t, l, y.left)
+		assert.Equal(t, x, y.right)
+	})
+
+	t.Run("deleted node has two children, successor in the left subtree of root's right child", func(t *testing.T) {
+		tree := NewBST()
+
+		z := &node{key: 15} // To delete
+		l := &node{key: 5}
+		r := &node{key: 30} // will be right child of successor
+		u := &node{key: 40}
+		y := &node{key: 25} // successor
+		x := &node{key: 28} // new left subtree of r
+
+		tree.root = z
+		z.left = l
+		z.right = r
+
+		l.parent = z
+
+		r.parent = z
+		r.right = u
+		r.left = y
+
+		y.parent = r
+		y.right = x
+
+		assert.Equal(t, 3, tree.Height())
+
+		tree.Delete(15)
+
+		assert.Nil(t, y.parent)
+		assert.Equal(t, 2, tree.Height())
+		assert.Equal(t, r, y.right)
+		assert.Equal(t, x, r.left)
+	})
+}
