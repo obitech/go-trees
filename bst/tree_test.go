@@ -14,17 +14,17 @@ type item struct {
 func TestTree_search(t *testing.T) {
 	tt := []struct {
 		name string
-		tree *Tree
+		tree *BSTree
 		key  int64
 		want *node
 	}{
 		{
 			name: "nil tree returns nil",
-			tree: &Tree{},
+			tree: &BSTree{},
 		},
 		{
 			name: "root hit returns value",
-			tree: &Tree{
+			tree: &BSTree{
 				root: &node{
 					key: 5,
 				},
@@ -34,7 +34,7 @@ func TestTree_search(t *testing.T) {
 		},
 		{
 			name: "root miss returns nil",
-			tree: &Tree{
+			tree: &BSTree{
 				root: &node{
 					key: 6,
 				},
@@ -43,7 +43,7 @@ func TestTree_search(t *testing.T) {
 		},
 		{
 			name: "h=1 left tree hit returns value",
-			tree: &Tree{
+			tree: &BSTree{
 				root: &node{
 					key: 10,
 					left: &node{
@@ -59,7 +59,7 @@ func TestTree_search(t *testing.T) {
 		},
 		{
 			name: "h=2 right tree hit returns value",
-			tree: &Tree{
+			tree: &BSTree{
 				root: &node{
 					key: 10,
 					left: &node{
@@ -75,7 +75,7 @@ func TestTree_search(t *testing.T) {
 		},
 		{
 			name: "h=2 miss returns nil",
-			tree: &Tree{
+			tree: &BSTree{
 				root: &node{
 					key: 10,
 					left: &node{
@@ -90,7 +90,7 @@ func TestTree_search(t *testing.T) {
 		},
 		{
 			name: "h=3 right tree hit returns value",
-			tree: &Tree{
+			tree: &BSTree{
 				root: &node{
 					key: 10,
 					left: &node{
@@ -118,7 +118,7 @@ func TestTree_search(t *testing.T) {
 		},
 		{
 			name: "h=3 left tree hit returns value",
-			tree: &Tree{
+			tree: &BSTree{
 				root: &node{
 					key: 10,
 					left: &node{
@@ -156,16 +156,16 @@ func TestTree_search(t *testing.T) {
 func TestTree_min(t *testing.T) {
 	tt := []struct {
 		name string
-		tree *Tree
+		tree *BSTree
 		want *node
 	}{
 		{
 			name: "Nil node returns nil",
-			tree: &Tree{},
+			tree: &BSTree{},
 		},
 		{
 			name: "root returns root value",
-			tree: &Tree{
+			tree: &BSTree{
 				root: &node{
 					key: 5,
 				},
@@ -174,7 +174,7 @@ func TestTree_min(t *testing.T) {
 		},
 		{
 			name: "h=1 returns correct value",
-			tree: &Tree{
+			tree: &BSTree{
 				root: &node{
 					key: 10,
 					left: &node{
@@ -189,7 +189,7 @@ func TestTree_min(t *testing.T) {
 		},
 		{
 			name: "h=2 returns correct value",
-			tree: &Tree{
+			tree: &BSTree{
 				root: &node{
 					key: 10,
 					left: &node{
@@ -226,16 +226,16 @@ func TestTree_min(t *testing.T) {
 func TestTree_max(t *testing.T) {
 	tt := []struct {
 		name string
-		tree *Tree
+		tree *BSTree
 		want *node
 	}{
 		{
 			name: "Nil node returns nil",
-			tree: &Tree{},
+			tree: &BSTree{},
 		},
 		{
 			name: "root returns root value",
-			tree: &Tree{
+			tree: &BSTree{
 				root: &node{
 					key: 5,
 				},
@@ -244,7 +244,7 @@ func TestTree_max(t *testing.T) {
 		},
 		{
 			name: "h=1 returns correct value",
-			tree: &Tree{
+			tree: &BSTree{
 				root: &node{
 					key: 10,
 					left: &node{
@@ -259,7 +259,7 @@ func TestTree_max(t *testing.T) {
 		},
 		{
 			name: "h=2 returns correct value",
-			tree: &Tree{
+			tree: &BSTree{
 				root: &node{
 					key: 10,
 					left: &node{
@@ -346,7 +346,7 @@ func TestTree_Upsert(t *testing.T) {
 
 		for _, tc := range tt {
 			t.Run(tc.name, func(t *testing.T) {
-				tree := NewBST()
+				tree := NewBSTree()
 
 				for _, i := range tc.items {
 					tree.Upsert(i.key, i.payload)
@@ -360,7 +360,7 @@ func TestTree_Upsert(t *testing.T) {
 	})
 
 	t.Run("update", func(t *testing.T) {
-		tree := NewBST()
+		tree := NewBSTree()
 
 		tree.Upsert(1, "test")
 		tree.Upsert(2, "test2")
@@ -414,7 +414,7 @@ func TestTree_Height(t *testing.T) {
 
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
-			tree := NewBST()
+			tree := NewBSTree()
 
 			for _, v := range tc.items {
 				tree.Upsert(v, nil)
@@ -578,7 +578,7 @@ func TestTree_Successor(t *testing.T) {
 
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
-			tree := NewBST()
+			tree := NewBSTree()
 
 			for _, i := range tc.items {
 				tree.Upsert(i.key, i.payload)
@@ -595,7 +595,7 @@ func TestTree_Successor(t *testing.T) {
 
 func TestTree_Delete(t *testing.T) {
 	t.Run("delete on empty tree is noop", func(t *testing.T) {
-		tree := NewBST()
+		tree := NewBSTree()
 
 		assert.Equal(t, -1, tree.Height())
 
@@ -605,7 +605,7 @@ func TestTree_Delete(t *testing.T) {
 	})
 
 	t.Run("delete on rooted tree on non-existing key is noop", func(t *testing.T) {
-		tree := NewBST()
+		tree := NewBSTree()
 
 		tree.Upsert(15, "test")
 		tree.Delete(0)
@@ -615,7 +615,7 @@ func TestTree_Delete(t *testing.T) {
 	})
 
 	t.Run("deleting root node leaves empty tree", func(t *testing.T) {
-		tree := NewBST()
+		tree := NewBSTree()
 
 		tree.Upsert(15, "test")
 		assert.Equal(t, 0, tree.Height())
@@ -627,7 +627,7 @@ func TestTree_Delete(t *testing.T) {
 	})
 
 	t.Run("deleted node gets replace by right child", func(t *testing.T) {
-		tree := NewBST()
+		tree := NewBSTree()
 
 		z := &node{key: 15}
 		r := &node{key: 20}
@@ -653,7 +653,7 @@ func TestTree_Delete(t *testing.T) {
 	})
 
 	t.Run("deleted node gets replace by left child", func(t *testing.T) {
-		tree := NewBST()
+		tree := NewBSTree()
 
 		z := &node{key: 15}
 		r := &node{key: 5}
@@ -679,7 +679,7 @@ func TestTree_Delete(t *testing.T) {
 	})
 
 	t.Run("deleted nodes has two children, successor is right child", func(t *testing.T) {
-		tree := NewBST()
+		tree := NewBSTree()
 
 		z := &node{key: 15}
 		y := &node{key: 20}
@@ -707,7 +707,7 @@ func TestTree_Delete(t *testing.T) {
 	})
 
 	t.Run("deleted node has two children, successor in the left subtree of root's right child", func(t *testing.T) {
-		tree := NewBST()
+		tree := NewBSTree()
 
 		z := &node{key: 15} // To delete
 		l := &node{key: 5}
