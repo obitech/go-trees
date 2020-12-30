@@ -6,16 +6,16 @@ import (
 	"sync"
 )
 
-// NewBST returns an empty binary search tree.
-func NewBST() *Tree {
-	return &Tree{
+// NewBSTree returns an empty binary search tree.
+func NewBSTree() *BSTree {
+	return &BSTree{
 		RWMutex: sync.RWMutex{},
 		root:    nil,
 	}
 }
 
 // Root returns the payload of the root node of the tree.
-func (t *Tree) Root() interface{} {
+func (t *BSTree) Root() interface{} {
 	t.RLock()
 	defer t.RUnlock()
 
@@ -29,7 +29,7 @@ func (t *Tree) Root() interface{} {
 // Height returns the height (max depth) of the tree. Returns -1 if the tree
 // has no nodes. A (rooted) tree with only a node (the root) has a height of
 // zero.
-func (t *Tree) Height() int {
+func (t *BSTree) Height() int {
 	t.RLock()
 	defer t.RUnlock()
 
@@ -37,7 +37,7 @@ func (t *Tree) Height() int {
 }
 
 // Upsert inserts or updates an item. Runs in O(lg n) time on average.
-func (t *Tree) Upsert(key int64, payload interface{}) {
+func (t *BSTree) Upsert(key int64, payload interface{}) {
 	t.Lock()
 	defer t.Unlock()
 
@@ -79,7 +79,7 @@ func (t *Tree) Upsert(key int64, payload interface{}) {
 }
 
 // Search searches for a for a node based on its key and returns the payload.
-func (t *Tree) Search(key int64) interface{} {
+func (t *BSTree) Search(key int64) interface{} {
 	t.RLock()
 	defer t.RUnlock()
 
@@ -97,7 +97,7 @@ func (t *Tree) Search(key int64) interface{} {
 }
 
 // Min returns the payload of the Node with the lowest key, or nil.
-func (t *Tree) Min() interface{} {
+func (t *BSTree) Min() interface{} {
 	t.RLock()
 	defer t.RUnlock()
 
@@ -111,7 +111,7 @@ func (t *Tree) Min() interface{} {
 }
 
 // Max returns the payload of the Node with the highest key, or nil.
-func (t *Tree) Max() interface{} {
+func (t *BSTree) Max() interface{} {
 	t.RLock()
 	defer t.RUnlock()
 
@@ -126,7 +126,7 @@ func (t *Tree) Max() interface{} {
 
 // Successor returns the next highest neighbour (key-wise) of the Node with the
 // passed key.
-func (t *Tree) Successor(key int64) interface{} {
+func (t *BSTree) Successor(key int64) interface{} {
 	t.RLock()
 	defer t.RUnlock()
 
@@ -141,7 +141,7 @@ func (t *Tree) Successor(key int64) interface{} {
 
 // Delete deletes a node with a given key. This runs in O(h) time with h being
 // the height of the tree.
-func (t *Tree) Delete(key int64) {
+func (t *BSTree) Delete(key int64) {
 	t.Lock()
 	defer t.Unlock()
 
@@ -150,7 +150,7 @@ func (t *Tree) Delete(key int64) {
 	}
 }
 
-func (t *Tree) delete(node *node) {
+func (t *BSTree) delete(node *node) {
 	switch {
 	// If the node has no left subtree, replace it with its right subtree.
 	case node.left == nil:
@@ -246,7 +246,7 @@ func search(node *node, key int64) *node {
 
 // transplant replaces one subtree of a node as a child of its parent, with
 // another subtree.
-func (t *Tree) transplant(nodeA, nodeB *node) {
+func (t *BSTree) transplant(nodeA, nodeB *node) {
 	if nodeA == nil {
 		return
 	}
