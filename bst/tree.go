@@ -78,7 +78,7 @@ func (t *BSTree) Upsert(key int64, payload interface{}) {
 	}
 }
 
-// Search searches for a for a node based on its key and returns the payload.
+// Search searches for a node based on its key and returns the payload.
 func (t *BSTree) Search(key int64) interface{} {
 	t.RLock()
 	defer t.RUnlock()
