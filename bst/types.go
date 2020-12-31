@@ -4,7 +4,7 @@ import (
 	"sync"
 )
 
-// BSTree represents a binary search tree with a root not and Mutex to protect
+// BSTree represents a binary search tree with a root node and Mutex to protect
 // concurrent access.
 type BSTree struct {
 	sync.RWMutex
