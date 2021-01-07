@@ -9,17 +9,7 @@ func (t *IntervalTree) Delete(key Interval) {
 		return
 	}
 
-	res := &inorderResult{
-		nodes:   make(map[Interval]*node),
-		results: make([]Result, 0),
-	}
-
-	t.searchInorder(t.root, key, res)
-	if len(res.results) == 0 {
-		return
-	}
-
-	if n, ok := res.nodes[key]; ok {
+	if n := t.findExact(key); n != nil {
 		t.delete(n)
 	}
 }

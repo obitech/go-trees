@@ -12,14 +12,7 @@ func (t *IntervalTree) Upsert(key Interval, payload interface{}) {
 		return
 	}
 
-	res := &inorderResult{
-		nodes:   make(map[Interval]*node),
-		results: make([]Result, 0),
-	}
-
-	t.searchInorder(t.root, key, res)
-
-	if n, ok := res.nodes[key]; ok {
+	if n := t.findExact(key); n != nil {
 		n.payload = payload
 	} else {
 		t.insert(t.newLeaf(key, payload))

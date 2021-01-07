@@ -57,6 +57,41 @@ func (t *IntervalTree) FindAllOverlapping(key Interval) ([]Result, error) {
 	return res.results, nil
 }
 
+// FindExact returns the exactly matching Result for the given key interval.
+// Returns an ErrNotFound if not found.
+func (t *IntervalTree) FindExact(key Interval) (Result, error) {
+	t.lock.RLock()
+	defer t.lock.RUnlock()
+
+	if n := t.findExact(key); n != nil {
+		return Result{
+			Interval: n.key,
+			Payload:  n.payload,
+		}, nil
+	}
+
+	return Result{}, ErrNotFound(fmt.Sprintf("interval %q does not exist", key))
+}
+
+func (t *IntervalTree) findExact(key Interval) *node {
+	if t.root == t.sentinel {
+		return nil
+	}
+
+	res := &inorderResult{
+		nodes:   make(map[Interval]*node),
+		results: make([]Result, 0),
+	}
+
+	t.searchInorder(t.root, key, res)
+
+	if n, ok := res.nodes[key]; ok {
+		return n
+	}
+
+	return nil
+}
+
 func (t *IntervalTree) searchInorder(z *node, key Interval, result *inorderResult) {
 	if result == nil {
 		panic("result can't be nil")
