@@ -209,3 +209,57 @@ func TestIntervalTree_FindAllOverlapping(t *testing.T) {
 		assert.Equal(t, want, r)
 	})
 }
+
+func TestIntervalTree_InOrder(t *testing.T) {
+	t.Run("empty tree returns nil", func(t *testing.T) {
+		tree := NewIntervalTree()
+
+		assert.Nil(t, tree.InOrder())
+	})
+
+	t.Run("rooted tree returns root", func(t *testing.T) {
+		tree := NewIntervalTree()
+
+		nov, _ := NewInterval(newTime(t, "2020-Sep-01"), newTime(t, "2020-Nov-01"))
+
+		tree.Upsert(nov, nil)
+
+		got := tree.InOrder()
+
+		want := []Result{
+			{
+				Interval: nov,
+			},
+		}
+
+		assert.Equal(t, want, got)
+	})
+
+	t.Run("h=1 tree returns correct results", func(t *testing.T) {
+		tree := NewIntervalTree()
+
+		nov, _ := NewInterval(newTime(t, "2020-Sep-01"), newTime(t, "2020-Nov-01"))
+		feb, _ := NewInterval(newTime(t, "2020-Aug-01"), newTime(t, "2020-Dec-01"))
+		dec, _ := NewInterval(newTime(t, "2020-Dec-01"), newTime(t, "2020-Dec-02"))
+
+		tree.Upsert(nov, nil)
+		tree.Upsert(feb, nil)
+		tree.Upsert(dec, nil)
+
+		got := tree.InOrder()
+
+		want := []Result{
+			{
+				Interval: feb,
+			},
+			{
+				Interval: nov,
+			},
+			{
+				Interval: dec,
+			},
+		}
+
+		assert.Equal(t, want, got)
+	})
+}

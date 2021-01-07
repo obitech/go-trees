@@ -12,7 +12,7 @@ type inorderResult struct {
 // FindFirstOverlapping returns the payload of the first interval that overlaps
 // with the passed key. Returns an ErrNotFound if no overlapping interval is
 // found.
-func (t *IntervalTree) FindFirstOverlapping(key Interval) (Result, error) {
+func (t *Tree) FindFirstOverlapping(key Interval) (Result, error) {
 	t.lock.RLock()
 	defer t.lock.RUnlock()
 
@@ -35,7 +35,7 @@ func (t *IntervalTree) FindFirstOverlapping(key Interval) (Result, error) {
 // FindAllOverlapping returns a slice of Result with all intervals overlapping
 // the given interval key. Returns an ErrNotFound if no overlapping interval is
 // found.
-func (t *IntervalTree) FindAllOverlapping(key Interval) ([]Result, error) {
+func (t *Tree) FindAllOverlapping(key Interval) ([]Result, error) {
 	t.lock.RLock()
 	defer t.lock.RUnlock()
 
@@ -59,7 +59,7 @@ func (t *IntervalTree) FindAllOverlapping(key Interval) ([]Result, error) {
 
 // FindExact returns the exactly matching Result for the given key interval.
 // Returns an ErrNotFound if not found.
-func (t *IntervalTree) FindExact(key Interval) (Result, error) {
+func (t *Tree) FindExact(key Interval) (Result, error) {
 	t.lock.RLock()
 	defer t.lock.RUnlock()
 
@@ -73,7 +73,42 @@ func (t *IntervalTree) FindExact(key Interval) (Result, error) {
 	return Result{}, ErrNotFound(fmt.Sprintf("interval %q does not exist", key))
 }
 
-func (t *IntervalTree) findExact(key Interval) *node {
+// InOrder returns an ordered list of all entries.
+func (t *Tree) InOrder() []Result {
+	t.lock.RLock()
+	defer t.lock.RUnlock()
+
+	if t.root == t.sentinel {
+		return nil
+	}
+
+	res := make([]Result, 0)
+
+	t.resultsInorder(t.root, &res)
+
+	return res
+}
+
+func (t *Tree) resultsInorder(z *node, res *[]Result) {
+	if z == t.sentinel {
+		return
+	}
+
+	if z.left != t.sentinel {
+		t.resultsInorder(z.left, res)
+	}
+
+	*res = append(*res, Result{
+		Interval: z.key,
+		Payload:  z.payload,
+	})
+
+	if z.right != t.sentinel {
+		t.resultsInorder(z.right, res)
+	}
+}
+
+func (t *Tree) findExact(key Interval) *node {
 	if t.root == t.sentinel {
 		return nil
 	}
@@ -92,7 +127,7 @@ func (t *IntervalTree) findExact(key Interval) *node {
 	return nil
 }
 
-func (t *IntervalTree) searchInorder(z *node, key Interval, result *inorderResult) {
+func (t *Tree) searchInorder(z *node, key Interval, result *inorderResult) {
 	if result == nil {
 		panic("result can't be nil")
 	}
@@ -114,7 +149,7 @@ func (t *IntervalTree) searchInorder(z *node, key Interval, result *inorderResul
 	}
 }
 
-func (t *IntervalTree) search(x *node, key Interval) *node {
+func (t *Tree) search(x *node, key Interval) *node {
 	for x != t.sentinel && !key.overlaps(x.key) {
 		if x.left != t.sentinel && greaterOrEqual(x.left.max, key.low) {
 			x = x.left

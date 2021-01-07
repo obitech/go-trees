@@ -2,7 +2,7 @@ package interval
 
 // Upsert updates an existing payload, or inserts a new one with the given
 // interval key.
-func (t *IntervalTree) Upsert(key Interval, payload interface{}) {
+func (t *Tree) Upsert(key Interval, payload interface{}) {
 	t.lock.Lock()
 	defer t.lock.Unlock()
 
@@ -19,7 +19,7 @@ func (t *IntervalTree) Upsert(key Interval, payload interface{}) {
 	}
 }
 
-func (t *IntervalTree) insert(z *node) {
+func (t *Tree) insert(z *node) {
 	var (
 		y = t.sentinel
 		x = t.root
@@ -58,14 +58,14 @@ func (t *IntervalTree) insert(z *node) {
 	t.fixupInsert(z)
 }
 
-func (t *IntervalTree) recalcMax(z *node) {
+func (t *Tree) recalcMax(z *node) {
 	for z != t.sentinel {
 		t.updateMax(z)
 		z = z.parent
 	}
 }
 
-func (t *IntervalTree) fixupInsert(z *node) {
+func (t *Tree) fixupInsert(z *node) {
 	for z.parent.color == red {
 		if z.parent == z.parent.parent.left {
 			y := z.parent.parent.right

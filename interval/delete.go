@@ -1,7 +1,7 @@
 package interval
 
 // Delete deletes a node with the given key.
-func (t *IntervalTree) Delete(key Interval) {
+func (t *Tree) Delete(key Interval) {
 	t.lock.Lock()
 	defer t.lock.Unlock()
 
@@ -14,7 +14,7 @@ func (t *IntervalTree) Delete(key Interval) {
 	}
 }
 
-func (t *IntervalTree) delete(z *node) {
+func (t *Tree) delete(z *node) {
 	var (
 		// y is either removed or moved in tree
 		y = z
@@ -62,7 +62,7 @@ func (t *IntervalTree) delete(z *node) {
 	}
 }
 
-func (t *IntervalTree) transplant(u, v *node) {
+func (t *Tree) transplant(u, v *node) {
 	switch {
 	case u.parent == t.sentinel:
 		t.root = v
@@ -75,7 +75,7 @@ func (t *IntervalTree) transplant(u, v *node) {
 	v.parent = u.parent
 }
 
-func (t *IntervalTree) fixupDelete(x *node) {
+func (t *Tree) fixupDelete(x *node) {
 	for x != t.root && x.color == black {
 		if x == x.parent.left {
 			w := x.parent.right
