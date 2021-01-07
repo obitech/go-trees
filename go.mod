@@ -1,4 +1,4 @@
-module github.com/obitech/go-tree
+module github.com/obitech/go-trees
 
 go 1.15
 
