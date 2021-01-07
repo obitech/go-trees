@@ -6,11 +6,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type item struct {
-	key     int64
-	payload string
-}
-
 func TestTree_Root(t *testing.T) {
 	t.Run("empty tree returns nil as payload", func(t *testing.T) {
 		tree := NewRedBlackTree()
