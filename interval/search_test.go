@@ -263,3 +263,132 @@ func TestIntervalTree_InOrder(t *testing.T) {
 		assert.Equal(t, want, got)
 	})
 }
+
+func TestTree_Successor(t *testing.T) {
+	tt := []struct {
+		name    string
+		inserts []Interval
+		search  Interval
+		want    Result
+		wantErr bool
+	}{
+		{
+			name: "empty tree yields error",
+			search: Interval{
+				low:  newTime(t, "2020-Nov-01"),
+				high: newTime(t, "2020-Nov-02"),
+			},
+			wantErr: true,
+		},
+		{
+			name: "rooted tree yields error",
+			inserts: []Interval{
+				{
+					low:  newTime(t, "2020-Nov-01"),
+					high: newTime(t, "2020-Nov-02"),
+				},
+			},
+			search: Interval{
+				low:  newTime(t, "2020-Nov-01"),
+				high: newTime(t, "2020-Nov-02"),
+			},
+			wantErr: true,
+		},
+		{
+			name: "h=1 tree yields result",
+			inserts: []Interval{
+				{
+					low:  newTime(t, "2020-Nov-01"),
+					high: newTime(t, "2020-Nov-02"),
+				},
+				{
+					low:  newTime(t, "2020-Dec-01"),
+					high: newTime(t, "2020-Dec-02"),
+				},
+				{
+					low:  newTime(t, "2020-Oct-01"),
+					high: newTime(t, "2020-Oct-02"),
+				},
+			},
+			search: Interval{
+				low:  newTime(t, "2020-Oct-01"),
+				high: newTime(t, "2020-Oct-02"),
+			},
+			want: Result{
+				Interval: Interval{
+					low:  newTime(t, "2020-Nov-01"),
+					high: newTime(t, "2020-Nov-02"),
+				},
+			},
+		},
+		{
+			name: "h=1 tree with overlapping intervals yields result",
+			inserts: []Interval{
+				{
+					low:  newTime(t, "2020-Nov-01"),
+					high: newTime(t, "2020-Dec-02"),
+				},
+				{
+					low:  newTime(t, "2020-Nov-15"),
+					high: newTime(t, "2020-Dec-01"),
+				},
+				{
+					low:  newTime(t, "2020-Oct-01"),
+					high: newTime(t, "2020-Oct-02"),
+				},
+			},
+			search: Interval{
+				low:  newTime(t, "2020-Nov-01"),
+				high: newTime(t, "2020-Dec-02"),
+			},
+			want: Result{
+				Interval: Interval{
+					low:  newTime(t, "2020-Nov-15"),
+					high: newTime(t, "2020-Dec-01"),
+				},
+			},
+		},
+		{
+			name: "h=1 tree with overlapping intervals but non-exact search key yields error",
+			inserts: []Interval{
+				{
+					low:  newTime(t, "2020-Nov-01"),
+					high: newTime(t, "2020-Dec-02"),
+				},
+				{
+					low:  newTime(t, "2020-Nov-15"),
+					high: newTime(t, "2020-Dec-01"),
+				},
+				{
+					low:  newTime(t, "2020-Oct-01"),
+					high: newTime(t, "2020-Oct-02"),
+				},
+			},
+			search: Interval{
+				low:  newTime(t, "2020-Nov-01"),
+				high: newTime(t, "2020-Dec-15"),
+			},
+			wantErr: true,
+		},
+	}
+
+	tree := NewIntervalTree()
+
+	for _, tc := range tt {
+		t.Run(tc.name, func(t *testing.T) {
+			for _, i := range tc.inserts {
+				tree.Upsert(i, nil)
+			}
+
+			got, err := tree.Successor(tc.search)
+
+			if tc.wantErr {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+			}
+
+			assert.Equal(t, tc.want, got)
+		})
+	}
+}

@@ -1,6 +1,8 @@
 package interval
 
-import "fmt"
+import (
+	"fmt"
+)
 
 const noIntervalErrMsg = "no interval found for %q"
 
@@ -87,6 +89,50 @@ func (t *Tree) InOrder() []Result {
 	t.resultsInorder(t.root, &res)
 
 	return res
+}
+
+// Successor returns the next highest neighbour (key-wise) of the Node with the
+// passed key interval. Returns ErrNotFound if the no successor can be found
+// (either because the passed key doesn't yield a node, or if the found node
+// is highest in the Tree.
+func (t *Tree) Successor(key Interval) (Result, error) {
+	t.lock.RLock()
+	defer t.lock.RUnlock()
+
+	z := t.findExact(key)
+	if z == nil {
+		return Result{}, ErrNotFound(fmt.Sprintf(noIntervalErrMsg, key))
+	}
+
+	n := t.successor(z)
+
+	if n == t.sentinel {
+		return Result{}, ErrNotFound(fmt.Sprintf("node with interval %q is the highest in the tree", key))
+	}
+
+	return Result{
+		Interval: n.key,
+		Payload:  n.payload,
+	}, nil
+}
+
+func (t *Tree) successor(z *node) *node {
+	if z == t.sentinel {
+		return nil
+	}
+
+	if z.right != t.sentinel {
+		return t.min(z.right)
+	}
+
+	parent := z.parent
+
+	for parent != t.sentinel && z == parent.right {
+		z = parent
+		parent = z.parent
+	}
+
+	return parent
 }
 
 func (t *Tree) resultsInorder(z *node, res *[]Result) {
