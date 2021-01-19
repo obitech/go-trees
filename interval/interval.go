@@ -24,6 +24,16 @@ func NewInterval(start, end time.Time) (Interval, error) {
 	}, nil
 }
 
+// Start returns the lower bound of the interval.
+func (i Interval) Start() time.Time {
+	return i.low
+}
+
+// Stop returns the upper bound of the interval.
+func (i Interval) Stop() time.Time {
+	return i.high
+}
+
 func (i Interval) less(x Interval) bool {
 	return i.low.Before(x.low) || i.low == x.low && i.high.Before(x.high)
 }
