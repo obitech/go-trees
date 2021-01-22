@@ -1,7 +1,7 @@
 package redblack
 
 // Delete deletes a node with the given key.
-func (t *RBTree) Delete(key int64) {
+func (t *RBTree) Delete(key Key) {
 	t.lock.Lock()
 	defer t.lock.Unlock()
 

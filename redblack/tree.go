@@ -69,7 +69,7 @@ func (t *RBTree) Max() interface{} {
 }
 
 // Search returns the payload for a given key, or nil.
-func (t *RBTree) Search(key int64) interface{} {
+func (t *RBTree) Search(key Key) interface{} {
 	t.lock.RLock()
 	defer t.lock.RUnlock()
 
@@ -88,7 +88,7 @@ func (t *RBTree) Search(key int64) interface{} {
 
 // Successor returns the payload of the next highest neighbour (key-wise) of the
 // passed key.
-func (t *RBTree) Successor(key int64) interface{} {
+func (t *RBTree) Successor(key Key) interface{} {
 	t.lock.RLock()
 	defer t.lock.RUnlock()
 
@@ -144,13 +144,13 @@ func (t *RBTree) max(z *node) *node {
 	return z
 }
 
-func (t *RBTree) search(z *node, key int64) *node {
+func (t *RBTree) search(z *node, key Key) *node {
 	if z == t.sentinel || z.key == key {
 		return z
 	}
 
 	for z != t.sentinel && z.key != key {
-		if key > z.key {
+		if z.key.Less(key) {
 			z = z.right
 		} else {
 			z = z.left
@@ -209,7 +209,7 @@ func (t *RBTree) rotateRight(x *node) {
 	x.parent = y
 }
 
-func (t *RBTree) newLeaf(key int64, p interface{}) *node {
+func (t *RBTree) newLeaf(key Key, p interface{}) *node {
 	return &node{
 		key:     key,
 		payload: p,

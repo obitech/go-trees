@@ -15,16 +15,24 @@ Implements a [Red-Black-Tree](https://en.wikipedia.org/wiki/Red%E2%80%93black_tr
 ```go
 tree := NewRedBlackTree()
 
+// Operations on arbitrary keys are allow as long as the type implements they 
+// Key interface.
+type myInt int
+
+func (i myInt) Less(v Key) bool {
+    return i < v.(myInt)
+}
+
 // Insert items.
-tree.Upsert(5, "test")
-tree.Upsert(10, "foo")
-tree.Upsert(15, 42)
+tree.Upsert(myInt(5), "test")
+tree.Upsert(myInt(10), "foo")
+tree.Upsert(myInt(15), 42)
 
 // Search for an item.
 fmt.Println(tree.Search(15)) 
 
 // Replace a payload.
-tree.Upsert(15, "bar")
+tree.Upsert(myInt(15), "bar")
 ```
 
 ### Benchmarks

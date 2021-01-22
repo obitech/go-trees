@@ -11,6 +11,10 @@ const (
 	black color = 1
 )
 
+type Key interface {
+	Less(k Key) bool
+}
+
 // Tree represents a red-black tree with a root node and Mutex to protect
 // concurrent access.
 type RBTree struct {
@@ -20,7 +24,7 @@ type RBTree struct {
 }
 
 type node struct {
-	key     int64
+	key     Key
 	color   color
 	left    *node
 	right   *node

@@ -17,7 +17,7 @@ func TestTree_Root(t *testing.T) {
 	t.Run("rooted tree returns root payload", func(t *testing.T) {
 		tree := NewRedBlackTree()
 
-		tree.root = tree.newLeaf(15, "root")
+		tree.root = tree.newLeaf(myInt(15), "root")
 		tree.root.parent = tree.sentinel
 
 		assert.Equal(t, "root", tree.Root())
@@ -33,7 +33,7 @@ func TestTree_Height(t *testing.T) {
 	t.Run("rooted tree returns 0", func(t *testing.T) {
 		tree := NewRedBlackTree()
 
-		x := tree.newLeaf(15, nil)
+		x := tree.newLeaf(myInt(15), nil)
 		x.parent = tree.sentinel
 
 		tree.root = x
@@ -44,15 +44,15 @@ func TestTree_Height(t *testing.T) {
 	t.Run("h=1 tree returns correct height", func(t *testing.T) {
 		tree := NewRedBlackTree()
 
-		x := tree.newLeaf(15, nil)
+		x := tree.newLeaf(myInt(15), nil)
 		x.parent = tree.sentinel
 		tree.root = x
 
-		l := tree.newLeaf(12, nil)
+		l := tree.newLeaf(myInt(12), nil)
 		l.parent = x
 		x.left = l
 
-		r := tree.newLeaf(20, nil)
+		r := tree.newLeaf(myInt(20), nil)
 		r.parent = x
 		x.right = r
 
@@ -62,23 +62,23 @@ func TestTree_Height(t *testing.T) {
 	t.Run("h=2 tree returns correct height", func(t *testing.T) {
 		tree := NewRedBlackTree()
 
-		x := tree.newLeaf(15, nil)
+		x := tree.newLeaf(myInt(15), nil)
 		x.parent = tree.sentinel
 		tree.root = x
 
-		l := tree.newLeaf(12, nil)
+		l := tree.newLeaf(myInt(12), nil)
 		l.parent = x
 		x.left = l
 
-		r := tree.newLeaf(20, nil)
+		r := tree.newLeaf(myInt(20), nil)
 		r.parent = x
 		x.right = r
 
-		y := tree.newLeaf(25, nil)
+		y := tree.newLeaf(myInt(25), nil)
 		y.parent = r
 		r.right = y
 
-		z := tree.newLeaf(9, nil)
+		z := tree.newLeaf(myInt(9), nil)
 		z.parent = l
 		l.left = z
 
@@ -96,7 +96,7 @@ func TestTree_Min(t *testing.T) {
 	t.Run("rooted tree returns root payload", func(t *testing.T) {
 		tree := NewRedBlackTree()
 
-		tree.root = tree.newLeaf(15, "root")
+		tree.root = tree.newLeaf(myInt(15), "root")
 		tree.root.parent = tree.sentinel
 
 		assert.Equal(t, "root", tree.Min())
@@ -105,15 +105,15 @@ func TestTree_Min(t *testing.T) {
 	t.Run("h=1 tree returns correct Min payload", func(t *testing.T) {
 		tree := NewRedBlackTree()
 
-		x := tree.newLeaf(15, 15)
+		x := tree.newLeaf(myInt(15), 15)
 		x.parent = tree.sentinel
 		tree.root = x
 
-		l := tree.newLeaf(12, 12)
+		l := tree.newLeaf(myInt(12), 12)
 		l.parent = x
 		x.left = l
 
-		r := tree.newLeaf(20, 20)
+		r := tree.newLeaf(myInt(20), 20)
 		r.parent = x
 		x.right = r
 
@@ -123,23 +123,23 @@ func TestTree_Min(t *testing.T) {
 	t.Run("h=2 tree returns correct Min payload", func(t *testing.T) {
 		tree := NewRedBlackTree()
 
-		x := tree.newLeaf(15, 15)
+		x := tree.newLeaf(myInt(15), 15)
 		x.parent = tree.sentinel
 		tree.root = x
 
-		l := tree.newLeaf(12, 12)
+		l := tree.newLeaf(myInt(12), 12)
 		l.parent = x
 		x.left = l
 
-		r := tree.newLeaf(20, 20)
+		r := tree.newLeaf(myInt(20), 20)
 		r.parent = x
 		x.right = r
 
-		y := tree.newLeaf(25, 25)
+		y := tree.newLeaf(myInt(25), 25)
 		y.parent = r
 		r.right = y
 
-		z := tree.newLeaf(9, 9)
+		z := tree.newLeaf(myInt(9), 9)
 		z.parent = l
 		l.left = z
 
@@ -157,7 +157,7 @@ func TestTree_Max(t *testing.T) {
 	t.Run("rooted tree returns root payload", func(t *testing.T) {
 		tree := NewRedBlackTree()
 
-		tree.root = tree.newLeaf(15, "root")
+		tree.root = tree.newLeaf(myInt(15), "root")
 		tree.root.parent = tree.sentinel
 
 		assert.Equal(t, "root", tree.Max())
@@ -166,15 +166,15 @@ func TestTree_Max(t *testing.T) {
 	t.Run("h=1 tree returns correct Max payload", func(t *testing.T) {
 		tree := NewRedBlackTree()
 
-		x := tree.newLeaf(15, 15)
+		x := tree.newLeaf(myInt(15), 15)
 		x.parent = tree.sentinel
 		tree.root = x
 
-		l := tree.newLeaf(12, 12)
+		l := tree.newLeaf(myInt(12), 12)
 		l.parent = x
 		x.left = l
 
-		r := tree.newLeaf(20, 20)
+		r := tree.newLeaf(myInt(20), 20)
 		r.parent = x
 		x.right = r
 
@@ -184,23 +184,23 @@ func TestTree_Max(t *testing.T) {
 	t.Run("h=2 tree returns correct Max payload", func(t *testing.T) {
 		tree := NewRedBlackTree()
 
-		x := tree.newLeaf(15, 15)
+		x := tree.newLeaf(myInt(15), 15)
 		x.parent = tree.sentinel
 		tree.root = x
 
-		l := tree.newLeaf(12, 12)
+		l := tree.newLeaf(myInt(12), 12)
 		l.parent = x
 		x.left = l
 
-		r := tree.newLeaf(20, 20)
+		r := tree.newLeaf(myInt(20), 20)
 		r.parent = x
 		x.right = r
 
-		y := tree.newLeaf(25, 25)
+		y := tree.newLeaf(myInt(25), 25)
 		y.parent = r
 		r.right = y
 
-		z := tree.newLeaf(9, 9)
+		z := tree.newLeaf(myInt(9), 9)
 		z.parent = l
 		l.left = z
 
@@ -211,18 +211,18 @@ func TestTree_Max(t *testing.T) {
 func TestTree_rotateLeft(t *testing.T) {
 	tree := NewRedBlackTree()
 
-	x := tree.newLeaf(15, 15)
-	y := tree.newLeaf(30, 30)
+	x := tree.newLeaf(myInt(15), 15)
+	y := tree.newLeaf(myInt(30), 30)
 
-	xL := tree.newLeaf(10, 10)
+	xL := tree.newLeaf(myInt(10), 10)
 	xL.parent = x
 	x.left = xL
 	x.right = y
 
-	yL := tree.newLeaf(25, 25)
+	yL := tree.newLeaf(myInt(25), 25)
 	yL.parent = y
 
-	yR := tree.newLeaf(35, 35)
+	yR := tree.newLeaf(myInt(35), 35)
 	yR.parent = y
 	y.left = yL
 	y.right = yR
@@ -247,18 +247,18 @@ func TestTree_rotateRight(t *testing.T) {
 
 	assert.Equal(t, -1, tree.Height())
 
-	x := tree.newLeaf(20, 20)
-	y := tree.newLeaf(40, 40)
+	x := tree.newLeaf(myInt(20), 20)
+	y := tree.newLeaf(myInt(40), 40)
 
-	xR := tree.newLeaf(25, 25)
+	xR := tree.newLeaf(myInt(25), 25)
 	xR.parent = x
 	x.left = y
 	x.right = xR
 
-	yR := tree.newLeaf(50, 50)
+	yR := tree.newLeaf(myInt(50), 50)
 	yR.parent = y
 
-	yL := tree.newLeaf(45, 45)
+	yL := tree.newLeaf(myInt(45), 45)
 	yL.parent = y
 
 	y.left = yL
@@ -282,7 +282,7 @@ func TestTree_rotateRight(t *testing.T) {
 func TestTree_Successor(t *testing.T) {
 	tree := NewRedBlackTree()
 	for _, i := range []int64{1, 20, 3, 5, 21, 12, 18, 13, 4, 8, 50, 30} {
-		tree.Upsert(i, i)
+		tree.Upsert(myInt(i), i)
 	}
 
 	tt := []struct {
@@ -349,7 +349,7 @@ func TestTree_Successor(t *testing.T) {
 
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
-			assert.Equal(t, tc.want, tree.Successor(tc.check))
+			assert.Equal(t, tc.want, tree.Successor(myInt(tc.check)))
 		})
 	}
 }
