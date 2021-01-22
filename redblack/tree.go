@@ -9,10 +9,10 @@ import (
 
 // NewRedBlackTree returns a new red-back tree. All operations on the tree are
 // safe to be accessed concurrently.
-func NewRedBlackTree() *RBTree {
+func NewRedBlackTree() *Tree {
 	sentinel := &node{color: black, payload: "sentinel"}
 
-	return &RBTree{
+	return &Tree{
 		lock:     sync.RWMutex{},
 		root:     sentinel,
 		sentinel: sentinel,
@@ -20,7 +20,7 @@ func NewRedBlackTree() *RBTree {
 }
 
 // Root returns the payload of the root node of the tree.
-func (t *RBTree) Root() interface{} {
+func (t *Tree) Root() interface{} {
 	t.lock.RLock()
 	defer t.lock.RUnlock()
 
@@ -33,7 +33,7 @@ func (t *RBTree) Root() interface{} {
 
 // Height returns the height (max depth) of the tree. Returns -1 if the tree
 // has no nodes. A (rooted) tree with only a single node has a height of zero.
-func (t *RBTree) Height() int {
+func (t *Tree) Height() int {
 	t.lock.RLock()
 	defer t.lock.RUnlock()
 
@@ -41,7 +41,7 @@ func (t *RBTree) Height() int {
 }
 
 // Min returns the payload of the lowest key, or nil.
-func (t *RBTree) Min() interface{} {
+func (t *Tree) Min() interface{} {
 	t.lock.RLock()
 	defer t.lock.RUnlock()
 
@@ -55,7 +55,7 @@ func (t *RBTree) Min() interface{} {
 }
 
 // Max returns the payload of the highest key, or nil.
-func (t *RBTree) Max() interface{} {
+func (t *Tree) Max() interface{} {
 	t.lock.RLock()
 	defer t.lock.RUnlock()
 
@@ -69,7 +69,7 @@ func (t *RBTree) Max() interface{} {
 }
 
 // Search returns the payload for a given key, or nil.
-func (t *RBTree) Search(key Key) interface{} {
+func (t *Tree) Search(key Key) interface{} {
 	t.lock.RLock()
 	defer t.lock.RUnlock()
 
@@ -88,7 +88,7 @@ func (t *RBTree) Search(key Key) interface{} {
 
 // Successor returns the payload of the next highest neighbour (key-wise) of the
 // passed key.
-func (t *RBTree) Successor(key Key) interface{} {
+func (t *Tree) Successor(key Key) interface{} {
 	t.lock.RLock()
 	defer t.lock.RUnlock()
 
@@ -101,7 +101,7 @@ func (t *RBTree) Successor(key Key) interface{} {
 	return n.payload
 }
 
-func (t *RBTree) height(node *node) float64 {
+func (t *Tree) height(node *node) float64 {
 	if node == t.sentinel {
 		return -1
 	}
@@ -109,7 +109,7 @@ func (t *RBTree) height(node *node) float64 {
 	return 1 + math.Max(t.height(node.left), t.height(node.right))
 }
 
-func (t *RBTree) successor(z *node) *node {
+func (t *Tree) successor(z *node) *node {
 	if z == t.sentinel {
 		return nil
 	}
@@ -128,7 +128,7 @@ func (t *RBTree) successor(z *node) *node {
 	return parent
 }
 
-func (t *RBTree) min(z *node) *node {
+func (t *Tree) min(z *node) *node {
 	for z != t.sentinel && z.left != t.sentinel {
 		z = z.left
 	}
@@ -136,7 +136,7 @@ func (t *RBTree) min(z *node) *node {
 	return z
 }
 
-func (t *RBTree) max(z *node) *node {
+func (t *Tree) max(z *node) *node {
 	for z != t.sentinel && z.right != t.sentinel {
 		z = z.right
 	}
@@ -144,7 +144,7 @@ func (t *RBTree) max(z *node) *node {
 	return z
 }
 
-func (t *RBTree) search(z *node, key Key) *node {
+func (t *Tree) search(z *node, key Key) *node {
 	if z == t.sentinel || z.key == key {
 		return z
 	}
@@ -160,7 +160,7 @@ func (t *RBTree) search(z *node, key Key) *node {
 	return z
 }
 
-func (t *RBTree) rotateLeft(x *node) {
+func (t *Tree) rotateLeft(x *node) {
 	// y's left subtree will be x's right subtree.
 	y := x.right
 	x.right = y.left
@@ -186,7 +186,7 @@ func (t *RBTree) rotateLeft(x *node) {
 	x.parent = y
 }
 
-func (t *RBTree) rotateRight(x *node) {
+func (t *Tree) rotateRight(x *node) {
 	y := x.left
 	x.left = y.right
 
@@ -209,7 +209,7 @@ func (t *RBTree) rotateRight(x *node) {
 	x.parent = y
 }
 
-func (t *RBTree) newLeaf(key Key, p interface{}) *node {
+func (t *Tree) newLeaf(key Key, p interface{}) *node {
 	return &node{
 		key:     key,
 		payload: p,
@@ -218,6 +218,6 @@ func (t *RBTree) newLeaf(key Key, p interface{}) *node {
 	}
 }
 
-func (t *RBTree) isLeaf(z *node) bool {
+func (t *Tree) isLeaf(z *node) bool {
 	return z.left == t.sentinel && z.right == t.sentinel
 }

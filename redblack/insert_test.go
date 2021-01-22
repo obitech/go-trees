@@ -190,7 +190,7 @@ func TestRBTree_Upsert(t *testing.T) {
 }
 
 //
-// func createTree(keys myInt) *RBTree {
+// func createTree(keys myInt) *Tree {
 // 	rand.Seed(time.Now().UnixNano())
 // 	tree := NewRedBlackTree()
 //

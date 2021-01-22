@@ -1,7 +1,7 @@
 package redblack
 
 // Delete deletes a node with the given key.
-func (t *RBTree) Delete(key Key) {
+func (t *Tree) Delete(key Key) {
 	t.lock.Lock()
 	defer t.lock.Unlock()
 
@@ -10,7 +10,7 @@ func (t *RBTree) Delete(key Key) {
 	}
 }
 
-func (t *RBTree) delete(z *node) {
+func (t *Tree) delete(z *node) {
 	var (
 		y              = z
 		yOriginalColor = y.color
@@ -50,7 +50,7 @@ func (t *RBTree) delete(z *node) {
 	}
 }
 
-func (t *RBTree) transplant(u, v *node) {
+func (t *Tree) transplant(u, v *node) {
 	switch {
 	case u.parent == t.sentinel:
 		t.root = v
@@ -63,7 +63,7 @@ func (t *RBTree) transplant(u, v *node) {
 	v.parent = u.parent
 }
 
-func (t *RBTree) fixupDelete(x *node) {
+func (t *Tree) fixupDelete(x *node) {
 	for x != t.root && x.color == black {
 		if x == x.parent.left {
 			w := x.parent.right

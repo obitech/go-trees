@@ -17,7 +17,7 @@ type Key interface {
 
 // Tree represents a red-black tree with a root node and Mutex to protect
 // concurrent access.
-type RBTree struct {
+type Tree struct {
 	lock     sync.RWMutex
 	root     *node
 	sentinel *node
