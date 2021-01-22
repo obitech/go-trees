@@ -1,7 +1,7 @@
 package redblack
 
 // Upsert updates an existing payload, or inserts a new one with the given key.
-func (t *RBTree) Upsert(key int64, payload interface{}) {
+func (t *RBTree) Upsert(key Key, payload interface{}) {
 	t.lock.Lock()
 	defer t.lock.Unlock()
 
@@ -20,7 +20,7 @@ func (t *RBTree) insert(z *node) {
 
 	for x != t.sentinel {
 		y = x
-		if z.key < x.key {
+		if z.key.Less(x.key) {
 			x = x.left
 		} else {
 			x = x.right
@@ -32,7 +32,7 @@ func (t *RBTree) insert(z *node) {
 	switch {
 	case y == t.sentinel:
 		t.root = z
-	case z.key < y.key:
+	case z.key.Less(y.key):
 		y.left = z
 	default:
 		y.right = z
